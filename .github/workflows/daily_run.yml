@@ -1,0 +1,36 @@
+name: Daily Monitor
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # 每天 UTC 时间 0点运行 (北京时间早上8点)
+  workflow_dispatch: # 允许手动点击按钮运行
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        
+    - name: Install dependencies
+      run: |
+        pip install requests
+        
+    - name: Run Monitor Script
+      env:
+        BIS_API_KEY: ${{ secrets.BIS_API_KEY }}
+      run: python main.py
+      
+    - name: Commit and Push changes
+      run: |
+        git config --global user.name 'GitHub Action'
+        git config --global user.email 'action@github.com'
+        git add data.json index.html
+        git commit -m "Auto update data" || exit 0
+        git push
