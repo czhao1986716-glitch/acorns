@@ -1,0 +1,248 @@
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <title>ACORNS Cloud Monitor</title>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <style>
+            body { background: #121212; color: #ccc; font-family: sans-serif; padding: 20px; }
+            h1 { text-align: center; color: #00bcd4; }
+            .info { text-align: center; color: #666; margin-bottom: 20px; }
+            table { width: 100%; border-collapse: collapse; background: #1e1e1e; font-size: 13px; }
+            th, td { padding: 10px; border-bottom: 1px solid #333; text-align: left; }
+            th { background: #252525; cursor: pointer; color: #888; }
+            th:hover { color: #fff; }
+            .up { color: #f44336; } .down { color: #4caf50; } 
+            .addr { color: #00bcd4; font-family: monospace; }
+            .new { background: #f44336; color: #fff; padding: 2px 4px; border-radius: 3px; font-size: 10px; margin-right:5px; }
+            .btn { background: #333; border: 1px solid #555; color: #fff; cursor: pointer; padding: 2px 8px; }
+            #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); }
+            .modal-content { background: #222; margin: 10% auto; padding: 20px; width: 80%; height: 400px; }
+        </style>
+    </head>
+    <body>
+    <h1>🌰 ACORNS 每日监控 (24人)</h1>
+    <div class="info">GitHub 自动更新 | 2025-12-23 15:10</div>
+    <table id="myTable">
+        <thead>
+            <tr>
+                <th onclick="s(0)">排名 ⇵</th>
+                <th>地址</th>
+                <th onclick="s(2)">持仓 ⇵</th>
+                <th onclick="s(3)">24H 变化 ⇵</th>
+                <th>走势</th>
+            </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td data-sort="1">#1</td>
+            <td><span class='new'>NEW</span> <span class="addr"></span></td>
+            <td data-sort="999703067.422742">999,703,067</td>
+            <td data-sort="0" class="flat">-</td>
+            <td><button class='btn' onclick="show('')">📈</button></td>
+        </tr>
+        <tr>
+            <td data-sort="2">#2</td>
+            <td><span class='new'>NEW</span> <span class="addr">bc1p36axjhmjnhwu6sne5s2pdkzltpv4y2qzp9tc7astjfdva9e63qdqcsj8hn</span></td>
+            <td data-sort="103408.26481597933">103,408</td>
+            <td data-sort="0" class="flat">-</td>
+            <td><button class='btn' onclick="show('bc1p36axjhmjnhwu6sne5s2pdkzltpv4y2qzp9tc7astjfdva9e63qdqcsj8hn')">📈</button></td>
+        </tr>
+        <tr>
+            <td data-sort="3">#3</td>
+            <td><span class='new'>NEW</span> <span class="addr">bc1pn9wy46tz083y4pd8g4wgm08l0yhm6nmsy47xyh9dkrhm6kzgf8sshc7ya0</span></td>
+            <td data-sort="71951.0">71,951</td>
+            <td data-sort="0" class="flat">-</td>
+            <td><button class='btn' onclick="show('bc1pn9wy46tz083y4pd8g4wgm08l0yhm6nmsy47xyh9dkrhm6kzgf8sshc7ya0')">📈</button></td>
+        </tr>
+        <tr>
+            <td data-sort="4">#4</td>
+            <td><span class='new'>NEW</span> <span class="addr">bc1p5dmfdgxrka4tc0m0qm8mphvexkrngd9tj2u8jw7gecyqzmsa0wjsm07gjc</span></td>
+            <td data-sort="21400.0">21,400</td>
+            <td data-sort="0" class="flat">-</td>
+            <td><button class='btn' onclick="show('bc1p5dmfdgxrka4tc0m0qm8mphvexkrngd9tj2u8jw7gecyqzmsa0wjsm07gjc')">📈</button></td>
+        </tr>
+        <tr>
+            <td data-sort="5">#5</td>
+            <td><span class='new'>NEW</span> <span class="addr">bc1pmhad2ymcrw4knljdce923qfwcp67k0l7merekxzpappfa0t9ahnqtf85e2</span></td>
+            <td data-sort="10000.0">10,000</td>
+            <td data-sort="0" class="flat">-</td>
+            <td><button class='btn' onclick="show('bc1pmhad2ymcrw4knljdce923qfwcp67k0l7merekxzpappfa0t9ahnqtf85e2')">📈</button></td>
+        </tr>
+        <tr>
+            <td data-sort="6">#6</td>
+            <td><span class='new'>NEW</span> <span class="addr">bc1pwp0s54yrzz67mtlanpm50a42j3zf2d6anyjg8hdxjukjy7erjkgsrvyedk</span></td>
+            <td data-sort="8200.0">8,200</td>
+            <td data-sort="0" class="flat">-</td>
+            <td><button class='btn' onclick="show('bc1pwp0s54yrzz67mtlanpm50a42j3zf2d6anyjg8hdxjukjy7erjkgsrvyedk')">📈</button></td>
+        </tr>
+        <tr>
+            <td data-sort="7">#7</td>
+            <td><span class='new'>NEW</span> <span class="addr">bc1p4wa6u48gzt7zmr7jejug2lctlze6myh9dx7hl9dr7e0ua2lau9psh47yp9</span></td>
+            <td data-sort="7469.0">7,469</td>
+            <td data-sort="0" class="flat">-</td>
+            <td><button class='btn' onclick="show('bc1p4wa6u48gzt7zmr7jejug2lctlze6myh9dx7hl9dr7e0ua2lau9psh47yp9')">📈</button></td>
+        </tr>
+        <tr>
+            <td data-sort="8">#8</td>
+            <td><span class='new'>NEW</span> <span class="addr">bc1pee0709dlew7sagreeqqfhvwkn28qyamw00yr8jlms4dh8n4fq63q2kxws9</span></td>
+            <td data-sort="7469.0">7,469</td>
+            <td data-sort="0" class="flat">-</td>
+            <td><button class='btn' onclick="show('bc1pee0709dlew7sagreeqqfhvwkn28qyamw00yr8jlms4dh8n4fq63q2kxws9')">📈</button></td>
+        </tr>
+        <tr>
+            <td data-sort="9">#9</td>
+            <td><span class='new'>NEW</span> <span class="addr">bc1qstp3n639xhuv29fx0gqcchu7pzcf2azlda7rpn</span></td>
+            <td data-sort="7469.0">7,469</td>
+            <td data-sort="0" class="flat">-</td>
+            <td><button class='btn' onclick="show('bc1qstp3n639xhuv29fx0gqcchu7pzcf2azlda7rpn')">📈</button></td>
+        </tr>
+        <tr>
+            <td data-sort="10">#10</td>
+            <td><span class='new'>NEW</span> <span class="addr">bc1qzl9t2h58jrrkfhfu4qfprha5559su8mex82dev</span></td>
+            <td data-sort="7469.0">7,469</td>
+            <td data-sort="0" class="flat">-</td>
+            <td><button class='btn' onclick="show('bc1qzl9t2h58jrrkfhfu4qfprha5559su8mex82dev')">📈</button></td>
+        </tr>
+        <tr>
+            <td data-sort="11">#11</td>
+            <td><span class='new'>NEW</span> <span class="addr">bc1pxxyuq2cte8rn3a7ewehkthq4t0d47vz0jx9kxtt9d6eacm6mvyysxyzp7g</span></td>
+            <td data-sort="7469.0">7,469</td>
+            <td data-sort="0" class="flat">-</td>
+            <td><button class='btn' onclick="show('bc1pxxyuq2cte8rn3a7ewehkthq4t0d47vz0jx9kxtt9d6eacm6mvyysxyzp7g')">📈</button></td>
+        </tr>
+        <tr>
+            <td data-sort="12">#12</td>
+            <td><span class='new'>NEW</span> <span class="addr">bc1px8wfv0a6ga5muwgvav27wq4vcktlspw9x7rjp6d2chjqf2egmahskswdjc</span></td>
+            <td data-sort="7469.0">7,469</td>
+            <td data-sort="0" class="flat">-</td>
+            <td><button class='btn' onclick="show('bc1px8wfv0a6ga5muwgvav27wq4vcktlspw9x7rjp6d2chjqf2egmahskswdjc')">📈</button></td>
+        </tr>
+        <tr>
+            <td data-sort="13">#13</td>
+            <td><span class='new'>NEW</span> <span class="addr">bc1p0yqur9dz8yrvscsltnw2n50wcqa6es277eemyg82vgtqaark09jqg35c7h</span></td>
+            <td data-sort="7469.0">7,469</td>
+            <td data-sort="0" class="flat">-</td>
+            <td><button class='btn' onclick="show('bc1p0yqur9dz8yrvscsltnw2n50wcqa6es277eemyg82vgtqaark09jqg35c7h')">📈</button></td>
+        </tr>
+        <tr>
+            <td data-sort="14">#14</td>
+            <td><span class='new'>NEW</span> <span class="addr">bc1phx9jckaftw9h8nqxk2n736aj5pwfk5scwaaf8u28p3fh8ep82nrsfxwas2</span></td>
+            <td data-sort="7469.0">7,469</td>
+            <td data-sort="0" class="flat">-</td>
+            <td><button class='btn' onclick="show('bc1phx9jckaftw9h8nqxk2n736aj5pwfk5scwaaf8u28p3fh8ep82nrsfxwas2')">📈</button></td>
+        </tr>
+        <tr>
+            <td data-sort="15">#15</td>
+            <td><span class='new'>NEW</span> <span class="addr">bc1psru7qsef08xz282n4s65h7yhrcalxn4st0nwa0cq3z67n7l7wktsdvxpz7</span></td>
+            <td data-sort="6431.1926">6,431</td>
+            <td data-sort="0" class="flat">-</td>
+            <td><button class='btn' onclick="show('bc1psru7qsef08xz282n4s65h7yhrcalxn4st0nwa0cq3z67n7l7wktsdvxpz7')">📈</button></td>
+        </tr>
+        <tr>
+            <td data-sort="16">#16</td>
+            <td><span class='new'>NEW</span> <span class="addr">bc1plwq6cy9rc8yldamkslfg83ryqmp6rh9szwvl5nmtayw76sw3yghsrkzyxq</span></td>
+            <td data-sort="5842.0">5,842</td>
+            <td data-sort="0" class="flat">-</td>
+            <td><button class='btn' onclick="show('bc1plwq6cy9rc8yldamkslfg83ryqmp6rh9szwvl5nmtayw76sw3yghsrkzyxq')">📈</button></td>
+        </tr>
+        <tr>
+            <td data-sort="17">#17</td>
+            <td><span class='new'>NEW</span> <span class="addr">bc1q54lqs8l4r0u35ppmjgkch6v0xlsqu7excryece</span></td>
+            <td data-sort="5373.0">5,373</td>
+            <td data-sort="0" class="flat">-</td>
+            <td><button class='btn' onclick="show('bc1q54lqs8l4r0u35ppmjgkch6v0xlsqu7excryece')">📈</button></td>
+        </tr>
+        <tr>
+            <td data-sort="18">#18</td>
+            <td><span class='new'>NEW</span> <span class="addr">bc1pequv0v734kjq3x7r7mk4wgpyqq75q3g9qjx97nvq3z4xr9ya755qr06qfj</span></td>
+            <td data-sort="2943.0">2,943</td>
+            <td data-sort="0" class="flat">-</td>
+            <td><button class='btn' onclick="show('bc1pequv0v734kjq3x7r7mk4wgpyqq75q3g9qjx97nvq3z4xr9ya755qr06qfj')">📈</button></td>
+        </tr>
+        <tr>
+            <td data-sort="19">#19</td>
+            <td><span class='new'>NEW</span> <span class="addr">bc1qmumuz838dtsv3fqjvx8732xpp46u6rayfmj49r</span></td>
+            <td data-sort="850.0">850</td>
+            <td data-sort="0" class="flat">-</td>
+            <td><button class='btn' onclick="show('bc1qmumuz838dtsv3fqjvx8732xpp46u6rayfmj49r')">📈</button></td>
+        </tr>
+        <tr>
+            <td data-sort="20">#20</td>
+            <td><span class='new'>NEW</span> <span class="addr">bc1p0wfrathvzl4hnxc25phtk872vrj5juhcy98cx56rkzsreddqe7cs89jgqr</span></td>
+            <td data-sort="284.0">284</td>
+            <td data-sort="0" class="flat">-</td>
+            <td><button class='btn' onclick="show('bc1p0wfrathvzl4hnxc25phtk872vrj5juhcy98cx56rkzsreddqe7cs89jgqr')">📈</button></td>
+        </tr>
+        <tr>
+            <td data-sort="21">#21</td>
+            <td><span class='new'>NEW</span> <span class="addr">bc1pa9d6h8dwrwn7nglzz5typhnhlf2nuyz767n8qw247luy5hp6ezvqgf679x</span></td>
+            <td data-sort="253.0">253</td>
+            <td data-sort="0" class="flat">-</td>
+            <td><button class='btn' onclick="show('bc1pa9d6h8dwrwn7nglzz5typhnhlf2nuyz767n8qw247luy5hp6ezvqgf679x')">📈</button></td>
+        </tr>
+        <tr>
+            <td data-sort="22">#22</td>
+            <td><span class='new'>NEW</span> <span class="addr">bc1pjxdv2u4j45tvgurdx0f9vtn8kk6ug6geaq2cqzkq33z2ygpw4phq535kc5</span></td>
+            <td data-sort="150.0">150</td>
+            <td data-sort="0" class="flat">-</td>
+            <td><button class='btn' onclick="show('bc1pjxdv2u4j45tvgurdx0f9vtn8kk6ug6geaq2cqzkq33z2ygpw4phq535kc5')">📈</button></td>
+        </tr>
+        <tr>
+            <td data-sort="23">#23</td>
+            <td><span class='new'>NEW</span> <span class="addr">bc1p8qefmhkz2386xvy9k6tvkskym9rexucnwuqmw8kvvagh8syzxlxq0sltrf</span></td>
+            <td data-sort="95.0">95</td>
+            <td data-sort="0" class="flat">-</td>
+            <td><button class='btn' onclick="show('bc1p8qefmhkz2386xvy9k6tvkskym9rexucnwuqmw8kvvagh8syzxlxq0sltrf')">📈</button></td>
+        </tr>
+        <tr>
+            <td data-sort="24">#24</td>
+            <td><span class='new'>NEW</span> <span class="addr">bc1p0v0lpe9eate9a3x57u74r602zjnfja374mdwnvs4udsekzygl0hqcywwfx</span></td>
+            <td data-sort="0.11984195969512657">0</td>
+            <td data-sort="0" class="flat">-</td>
+            <td><button class='btn' onclick="show('bc1p0v0lpe9eate9a3x57u74r602zjnfja374mdwnvs4udsekzygl0hqcywwfx')">📈</button></td>
+        </tr></tbody>
+    </table>
+    
+    <div id="modal" onclick="this.style.display='none'">
+        <div class="modal-content"><canvas id="chart"></canvas></div>
+    </div>
+    
+    <script>
+        const data = {"": [{"t": "2025-12-23", "y": 999703067.422742}], "bc1p36axjhmjnhwu6sne5s2pdkzltpv4y2qzp9tc7astjfdva9e63qdqcsj8hn": [{"t": "2025-12-23", "y": 103408.26481597933}], "bc1pn9wy46tz083y4pd8g4wgm08l0yhm6nmsy47xyh9dkrhm6kzgf8sshc7ya0": [{"t": "2025-12-23", "y": 71951.0}], "bc1p5dmfdgxrka4tc0m0qm8mphvexkrngd9tj2u8jw7gecyqzmsa0wjsm07gjc": [{"t": "2025-12-23", "y": 21400.0}], "bc1pmhad2ymcrw4knljdce923qfwcp67k0l7merekxzpappfa0t9ahnqtf85e2": [{"t": "2025-12-23", "y": 10000.0}], "bc1pwp0s54yrzz67mtlanpm50a42j3zf2d6anyjg8hdxjukjy7erjkgsrvyedk": [{"t": "2025-12-23", "y": 8200.0}], "bc1p4wa6u48gzt7zmr7jejug2lctlze6myh9dx7hl9dr7e0ua2lau9psh47yp9": [{"t": "2025-12-23", "y": 7469.0}], "bc1pee0709dlew7sagreeqqfhvwkn28qyamw00yr8jlms4dh8n4fq63q2kxws9": [{"t": "2025-12-23", "y": 7469.0}], "bc1qstp3n639xhuv29fx0gqcchu7pzcf2azlda7rpn": [{"t": "2025-12-23", "y": 7469.0}], "bc1qzl9t2h58jrrkfhfu4qfprha5559su8mex82dev": [{"t": "2025-12-23", "y": 7469.0}], "bc1pxxyuq2cte8rn3a7ewehkthq4t0d47vz0jx9kxtt9d6eacm6mvyysxyzp7g": [{"t": "2025-12-23", "y": 7469.0}], "bc1px8wfv0a6ga5muwgvav27wq4vcktlspw9x7rjp6d2chjqf2egmahskswdjc": [{"t": "2025-12-23", "y": 7469.0}], "bc1p0yqur9dz8yrvscsltnw2n50wcqa6es277eemyg82vgtqaark09jqg35c7h": [{"t": "2025-12-23", "y": 7469.0}], "bc1phx9jckaftw9h8nqxk2n736aj5pwfk5scwaaf8u28p3fh8ep82nrsfxwas2": [{"t": "2025-12-23", "y": 7469.0}], "bc1psru7qsef08xz282n4s65h7yhrcalxn4st0nwa0cq3z67n7l7wktsdvxpz7": [{"t": "2025-12-23", "y": 6431.1926}], "bc1plwq6cy9rc8yldamkslfg83ryqmp6rh9szwvl5nmtayw76sw3yghsrkzyxq": [{"t": "2025-12-23", "y": 5842.0}], "bc1q54lqs8l4r0u35ppmjgkch6v0xlsqu7excryece": [{"t": "2025-12-23", "y": 5373.0}], "bc1pequv0v734kjq3x7r7mk4wgpyqq75q3g9qjx97nvq3z4xr9ya755qr06qfj": [{"t": "2025-12-23", "y": 2943.0}], "bc1qmumuz838dtsv3fqjvx8732xpp46u6rayfmj49r": [{"t": "2025-12-23", "y": 850.0}], "bc1p0wfrathvzl4hnxc25phtk872vrj5juhcy98cx56rkzsreddqe7cs89jgqr": [{"t": "2025-12-23", "y": 284.0}], "bc1pa9d6h8dwrwn7nglzz5typhnhlf2nuyz767n8qw247luy5hp6ezvqgf679x": [{"t": "2025-12-23", "y": 253.0}], "bc1pjxdv2u4j45tvgurdx0f9vtn8kk6ug6geaq2cqzkq33z2ygpw4phq535kc5": [{"t": "2025-12-23", "y": 150.0}], "bc1p8qefmhkz2386xvy9k6tvkskym9rexucnwuqmw8kvvagh8syzxlxq0sltrf": [{"t": "2025-12-23", "y": 95.0}], "bc1p0v0lpe9eate9a3x57u74r602zjnfja374mdwnvs4udsekzygl0hqcywwfx": [{"t": "2025-12-23", "y": 0.11984195969512657}]};
+        let c;
+        function show(k) {
+            document.getElementById('modal').style.display='block';
+            if(c) c.destroy();
+            c = new Chart(document.getElementById('chart'), {
+                type: 'line',
+                data: { labels: data[k].map(p=>p.t), datasets: [{ label: '持仓', data: data[k].map(p=>p.y), borderColor: '#00bcd4', pointRadius: 3 }] },
+                options: { maintainAspectRatio: false, scales: { y: { grid: { color: '#333' } } } }
+            });
+        }
+        // 简化的排序函数
+        function s(n) {
+            var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+            table = document.getElementById("myTable");
+            switching = true; dir = "asc"; 
+            while (switching) {
+                switching = false; rows = table.rows;
+                for (i = 1; i < (rows.length - 1); i++) {
+                    shouldSwitch = false;
+                    x = parseFloat(rows[i].getElementsByTagName("TD")[n].getAttribute("data-sort"));
+                    y = parseFloat(rows[i + 1].getElementsByTagName("TD")[n].getAttribute("data-sort"));
+                    if (dir == "asc") { if (x > y) { shouldSwitch = true; break; } } 
+                    else if (dir == "desc") { if (x < y) { shouldSwitch = true; break; } }
+                }
+                if (shouldSwitch) {
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true; switchcount ++; 
+                } else {
+                    if (switchcount == 0 && dir == "asc") { dir = "desc"; switching = true; }
+                }
+            }
+        }
+    </script>
+    </body></html>
+    
