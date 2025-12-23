@@ -2,8 +2,8 @@ name: Daily Monitor
 
 on:
   schedule:
-    - cron: '0 0 * * *' # 每天 UTC 时间 0点运行 (北京时间早上8点)
-  workflow_dispatch: # 允许手动点击按钮运行
+    - cron: '0 0 * * *' # 每天 UTC 0点 (北京早8点)
+  workflow_dispatch:
 
 jobs:
   build:
@@ -18,13 +18,16 @@ jobs:
       with:
         python-version: '3.9'
         
+    # 新增：安装 Chrome 浏览器
+    - name: Install Chrome
+      uses: browser-actions/setup-chrome@v1
+      
+    # 修改：安装依赖 (增加 selenium, bs4)
     - name: Install dependencies
       run: |
-        pip install requests
+        pip install requests beautifulsoup4 selenium webdriver-manager
         
-    - name: Run Monitor Script
-      env:
-        BIS_API_KEY: ${{ secrets.BIS_API_KEY }}
+    - name: Run Scraper Script
       run: python main.py
       
     - name: Commit and Push changes
@@ -32,5 +35,5 @@ jobs:
         git config --global user.name 'GitHub Action'
         git config --global user.email 'action@github.com'
         git add data.json index.html
-        git commit -m "Auto update data" || exit 0
+        git commit -m "Auto update data (Web Scrape)" || exit 0
         git push
