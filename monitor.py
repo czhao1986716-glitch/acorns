@@ -23,7 +23,13 @@ HTML_FILE = "acorns_monitor_v35_plus.html"
 # 5. 备注名单
 WATCHLIST = {
     "0xa07764097a4da7f3b61a562ca1f8e6779494748c": "🥇 榜一 (项目方)",
-    "0x899cdf7bf5cf1c5a1b3c9afab2faf55482b97662": "🥈 榜二 (池子)"
+    "0x899cdf7bf5cf1c5a1b3c9afab2faf55482b97662": "🥈 榜二 (池子)",
+        "0xbacb6e7774bb84dfcc0f5ad89c51782eade91f7e": "大宇钱包",
+    "0xd3a5b717ab78f6075def527f070b9ee0dc662828": "BIS",
+    "0x63160c1f9f071b57b6860bd8de66c7cb87295014": "CATSWAP",
+    "0xf97ed5736eb42b0056b030e56349b3f48fce1898": "岩姐线上伙伴--8sats",
+    "0xb7f1b7b18c070f998320ca75d1f1e1e33d7ab421": "岩姐团队长吕小金&J K--8.5sats",
+    "0xb9d545610680be42046a75d51b199b107cb51c6c": "岩姐伙伴陈老师9.3sats"
 }
 # ============================================
 
@@ -413,3 +419,4 @@ if __name__ == "__main__":
         # 注意: webbrowser 已移除，适合 GitHub Actions
     else:
         print("❌ 抓取失败。")
+
