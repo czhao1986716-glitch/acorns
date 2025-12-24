@@ -17,7 +17,6 @@
         .addr-btc{color:#666;font-size:11px;font-family:monospace}
         .up{color:#f44336} .down{color:#4caf50} 
         
-        /* 标签样式 */
         .mint-tag{background:#9c27b0;color:#fff;padding:2px 4px;font-size:10px;border-radius:3px;font-weight:bold;margin-right:4px}
         .new-tag{background:#f44336;color:#fff;padding:2px 4px;font-size:10px;border-radius:3px;margin-right:4px}
         .ret-tag{background:#2196F3;color:#fff;padding:2px 4px;font-size:10px;border-radius:3px;margin-right:4px}
@@ -31,7 +30,7 @@
     </style></head><body>
     
     <h1>🌰 ACORNS V35+ (终极融合版)</h1>
-    <div class="info">总人数: <span id="count">4608</span> | 更新: 2025-12-24 14:02</div>
+    <div class="info">总人数: <span id="count">4608</span> | 更新: 2025-12-24 22:17 (北京时间)</div>
     
     <div class="controls">
         <input type="text" id="search" placeholder="🔍 搜索地址 / MINT / NEW / 备注..." onkeyup="render()">
@@ -77,10 +76,8 @@
         
         let html = [];
         data.forEach(item => {
-            // V35 纯净格式: 不显示小数
             let balStr = item.bal.toLocaleString('en-US', {maximumFractionDigits: 0});
             let pctStr = item.pct.toFixed(2) + "%";
-            
             let chgClass = "flat", chgText = "-";
             if(item.change > 0) { 
                 chgClass="up"; 
@@ -91,7 +88,6 @@
                 chgText = item.change.toLocaleString('en-US', {maximumFractionDigits: 0}) + " ▼"; 
             }
             
-            // 标签生成逻辑
             let tags = "";
             if(item.status === "NEW") tags += "<span class='new-tag'>🔥 NEW</span>";
             if(item.status === "RETURN") tags += "<span class='ret-tag'>♻️ 回归</span>";
