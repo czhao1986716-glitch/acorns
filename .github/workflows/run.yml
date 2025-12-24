@@ -1,0 +1,42 @@
+name: ACORNS Daily Monitor
+
+on:
+  schedule:
+    # UTC时间 16:00 = 北京时间 00:00
+    # 每天凌晨0点运行
+    - cron: '0 16 * * *'
+  # 允许手动点击按钮运行 (方便测试)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run Monitor Script
+        # 注意：这里的 monitor.py 必须和您上传的 Python 脚本文件名一致
+        run: python monitor.py
+
+      - name: Commit and Push changes
+        run: |
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'actions@github.com'
+          # 自动提交数据库文件和网页文件
+          git add acorns_light_db.json *.html
+          # 如果没有变化就不提交，避免报错
+          git commit -m "📈 Auto-update Daily Report" || exit 0
+          git push
