@@ -2,7 +2,6 @@ import requests
 import json
 import os
 import datetime
-import webbrowser
 from datetime import timedelta, timezone
 
 # ================= ⚙️ 配置区 =================
@@ -17,7 +16,7 @@ PROJECT_WALLET = "0xa07764097a4da7f3b61a562ca1f8e6779494748c"
 # 3. 代币总量 (用于计算占比)
 TOTAL_SUPPLY = 999703067 
 
-# 4. 文件名
+# 4. 文件名 (保持您当前的设置)
 DB_FILE = "acorns_light_db.json"
 HTML_FILE = "acorns_monitor_v35_plus.html"
 
@@ -38,7 +37,7 @@ def load_db():
         except: return {}
     return {}
 
-# === 核心功能 1: 深度溯源 MINT 名单 (解决漏标问题) ===
+# === 核心功能 1: 深度溯源 MINT 名单 ===
 def fetch_mint_list_deep():
     print(f"🕵️‍♂️ [1/3] 正在全量扫描项目方历史，寻找 MINT 地址...")
     print("⏳ 正在翻阅链上账本 (为了不漏掉早期地址，这需要一点时间)...")
@@ -63,7 +62,7 @@ def fetch_mint_list_deep():
             print(f"   已扫描 {total_scanned} 笔交易...", end="\r")
             
             for item in items:
-                # 再次校验合约
+                # 校验合约
                 if item.get('token', {}).get('address', '').lower() != TOKEN_CONTRACT.lower(): continue
                 
                 from_addr = item.get('from', {}).get('hash', '').lower()
@@ -83,7 +82,7 @@ def fetch_mint_list_deep():
     print(f"\n✅ MINT 名单建立完毕！共发现 {len(minters)} 个原始地址。")
     return minters
 
-# === 核心功能 2: 智能验真 (解决假 NEW 问题) ===
+# === 核心功能 2: 智能验真 ===
 def check_is_truly_new(address):
     url = f"{EXPLORER_API}/addresses/{address}/token-transfers"
     params = {"token": TOKEN_CONTRACT, "type": "ERC-20", "limit": 10}
@@ -114,7 +113,7 @@ def fetch_data(minters_set, db_old_keys):
         items = resp.json().get('items', [])
         
         holders = []
-        candidates_for_check = [] # 待验真的地址
+        candidates_for_check = [] 
         
         for item in items:
             ox = item.get('evm_wallet')
@@ -131,7 +130,7 @@ def fetch_data(minters_set, db_old_keys):
                 # 2. 计算占比
                 percent = (bal / TOTAL_SUPPLY) * 100
                 
-                # 3. 初步判断是否为新人 (不在本地数据库里)
+                # 3. 初步判断是否为新人
                 is_potential_new = (key not in db_old_keys) and (len(db_old_keys) > 0)
                 
                 status = ""
@@ -152,7 +151,6 @@ def fetch_data(minters_set, db_old_keys):
         # === 批量验真 ===
         if candidates_for_check:
             print(f"🕵️‍♂️ [3/3] 正在核实 {len(candidates_for_check)} 个新出现的地址...")
-            # 如果数量太多(>50)，为了保护API，就不一一查了，直接标 NEW
             skip_check = len(candidates_for_check) > 50
             
             count = 0
@@ -164,11 +162,10 @@ def fetch_data(minters_set, db_old_keys):
                 else:
                     print(f"   核查中 ({count}/{len(candidates_for_check)})...", end="\r")
                     is_true = check_is_truly_new(addr)
-                    res = "NEW" if is_true else "RETURN" # RETURN = 回归
+                    res = "NEW" if is_true else "RETURN" 
                 
                 cache[addr] = res
             
-            # 回填状态
             for h in holders:
                 if h['status'] == "CHECKING":
                     h['status'] = cache.get(h['key'], "NEW")
@@ -181,7 +178,11 @@ def fetch_data(minters_set, db_old_keys):
 
 def generate_report(holders, db):
     chart_data = {}
-    today_str = datetime.date.today().strftime("%Y-%m-%d")
+    
+    # === 北京时间修正 (UTC+8) ===
+    tz_cn = timezone(timedelta(hours=8))
+    today_str = datetime.datetime.now(tz_cn).strftime("%Y-%m-%d")
+    
     table_data = [] 
     
     for h in holders:
@@ -194,7 +195,8 @@ def generate_report(holders, db):
             if history:
                 try:
                     last = datetime.datetime.strptime(history[-1]['t'], "%Y-%m-%d").date()
-                    delta = (datetime.date.today() - last).days
+                    current_date_obj = datetime.datetime.strptime(today_str, "%Y-%m-%d").date()
+                    delta = (current_date_obj - last).days
                     if delta > 1:
                         for i in range(1, delta):
                             d = (last + timedelta(days=i)).strftime("%Y-%m-%d")
@@ -207,7 +209,6 @@ def generate_report(holders, db):
         if len(history) > 180: history = history[-180:]
         db[key] = history
         
-        # === V35 核心：忽略微小变化 ===
         change = 0
         if len(history) >= 2: 
             raw_change = h['bal'] - history[-2]['y']
@@ -215,7 +216,6 @@ def generate_report(holders, db):
 
         chart_data[key] = history
         
-        # 准备前端数据
         note = WATCHLIST.get(key, "")
         if h['is_mint'] and key != PROJECT_WALLET.lower():
             note = "🎁 [MINT] " + note
@@ -229,15 +229,17 @@ def generate_report(holders, db):
             "change": change,
             "note": note,
             "status": h['status'],
-            "is_new_day": (len(history) == 1) # 辅助判断
+            "is_new_day": (len(history) == 1)
         })
 
     save_db(db)
     
-    # === HTML 生成 (V35 风格 + 新功能) ===
+    # === HTML 生成 ===
     json_chart = json.dumps(chart_data)
     json_table = json.dumps(table_data)
-    now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+    
+    # === 北京时间显示 ===
+    now = datetime.datetime.now(tz_cn).strftime("%Y-%m-%d %H:%M")
     
     html = f"""
     <!DOCTYPE html><html><head><meta charset="utf-8"><title>ACORNS V35+ 融合版</title>
@@ -258,7 +260,6 @@ def generate_report(holders, db):
         .addr-btc{{color:#666;font-size:11px;font-family:monospace}}
         .up{{color:#f44336}} .down{{color:#4caf50}} 
         
-        /* 标签样式 */
         .mint-tag{{background:#9c27b0;color:#fff;padding:2px 4px;font-size:10px;border-radius:3px;font-weight:bold;margin-right:4px}}
         .new-tag{{background:#f44336;color:#fff;padding:2px 4px;font-size:10px;border-radius:3px;margin-right:4px}}
         .ret-tag{{background:#2196F3;color:#fff;padding:2px 4px;font-size:10px;border-radius:3px;margin-right:4px}}
@@ -272,7 +273,7 @@ def generate_report(holders, db):
     </style></head><body>
     
     <h1>🌰 ACORNS V35+ (终极融合版)</h1>
-    <div class="info">总人数: <span id="count">{len(holders)}</span> | 更新: {now}</div>
+    <div class="info">总人数: <span id="count">{len(holders)}</span> | 更新: {now} (北京时间)</div>
     
     <div class="controls">
         <input type="text" id="search" placeholder="🔍 搜索地址 / MINT / NEW / 备注..." onkeyup="render()">
@@ -318,10 +319,8 @@ def generate_report(holders, db):
         
         let html = [];
         data.forEach(item => {{
-            // V35 纯净格式: 不显示小数
             let balStr = item.bal.toLocaleString('en-US', {{maximumFractionDigits: 0}});
             let pctStr = item.pct.toFixed(2) + "%";
-            
             let chgClass = "flat", chgText = "-";
             if(item.change > 0) {{ 
                 chgClass="up"; 
@@ -332,7 +331,6 @@ def generate_report(holders, db):
                 chgText = item.change.toLocaleString('en-US', {{maximumFractionDigits: 0}}) + " ▼"; 
             }}
             
-            // 标签生成逻辑
             let tags = "";
             if(item.status === "NEW") tags += "<span class='new-tag'>🔥 NEW</span>";
             if(item.status === "RETURN") tags += "<span class='ret-tag'>♻️ 回归</span>";
@@ -406,18 +404,12 @@ def generate_report(holders, db):
 
 if __name__ == "__main__":
     db = load_db()
-    
-    # 1. 深度查 Mint
     minters_set = fetch_mint_list_deep()
-    
-    # 2. 查持仓 + 智能验真
-    # 传入 db.keys() 作为“老朋友”名单
     holders = fetch_data(minters_set, db.keys())
     
     if holders:
         path = generate_report(holders, db)
         print(f"✅ 报告已生成: {path}")
+        # 注意: webbrowser 已移除，适合 GitHub Actions
     else:
-
         print("❌ 抓取失败。")
-
