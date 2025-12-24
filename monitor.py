@@ -419,4 +419,5 @@ if __name__ == "__main__":
         print(f"✅ 报告已生成: {path}")
         webbrowser.open(f'file:///{os.path.abspath(path)}')  <--
     else:
+
         print("❌ 抓取失败。")
