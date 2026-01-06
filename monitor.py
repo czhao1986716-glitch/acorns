@@ -45,6 +45,7 @@ WATCHLIST = {
     "0x7eac9d9f054d12aa6e2d499e181f5932ddc41a8c": "王金龙地址3",
     "0x4ba15fd51f5ab0c31233893df6cd08283b580a0a": "王金龙地址4",
     "0x881a670564867d6Af6F8B9a47B9B14186d4523b3": "王金龙地址5"
+    "0xe513a6fb5fed9fe4d5abbc7f1fe64cec568fba18": "王金龙地址6"
 }
 # ============================================
 
@@ -434,6 +435,7 @@ if __name__ == "__main__":
         # 注意: webbrowser 已移除，适合 GitHub Actions
     else:
         print("❌ 抓取失败。")
+
 
 
 
