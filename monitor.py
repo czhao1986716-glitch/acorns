@@ -44,12 +44,13 @@ WATCHLIST = {
     "0xa648ab10aa4b6911e80b58fef5f402bed96a93bc": "王金龙地址2",
     "0x7eac9d9f054d12aa6e2d499e181f5932ddc41a8c": "王金龙地址3",
     "0x4ba15fd51f5ab0c31233893df6cd08283b580a0a": "王金龙地址4",
-    "0x881a670564867d6Af6F8B9a47B9B14186d4523b3": "王金龙地址5",
+    "0x881a670564867d6af6f8b9a47b9b14186d4523b3": "王金龙地址5",
     "0xe513a6fb5fed9fe4d5abbc7f1fe64cec568fba18": "王金龙地址6",
     "0x758f29be1e23ba21a5b69c1024db4e4b33e9fc50": "王金龙地址7",
     "0x02e4b4cb9c796fa67b27b40e7a004a9180a4e4e0": "王金龙地址8",
-    "0x170e7BAF244A95989d059b5a4AF7a27A4E712616": "105nft",
-    "0xA1763467317d8F18955c06e8be2D1909c6b611e2": "105nft"
+    "0x170e7baf244a95989d059b5a4af7a27a4e712616": "105nft",
+    "0xa1763467317d8f18955c06e8be2d1909c6b611e2": "105nft",
+    "0xd00a593da9d9f5769b4bcbb657d3559960165299": "101nft"
 }
 # ============================================
 
@@ -439,6 +440,7 @@ if __name__ == "__main__":
         # 注意: webbrowser 已移除，适合 GitHub Actions
     else:
         print("❌ 抓取失败。")
+
 
 
 
